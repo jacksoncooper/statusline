@@ -19,6 +19,10 @@ parseError state reason =
   ++ ": "
   ++ reason
 
+-- According to Haskell Programming from First Principles, these sorts of parsers have fallen out
+-- of style for newer designs. I'm using this representation because of its similariy to the State
+-- type synonym, defined in Control.Monad.Trans.State.
+
 newtype Parser a =
   Parser { runParser :: State -> Either String (State, a) }
 
@@ -58,12 +62,7 @@ consume =
         then Right (State (line + 1) 0 restOfInput, inputHead)
         else Right (State line (column + 1) restOfInput, inputHead)
       [] ->
-        Left $ parseError state "Cannot consume character from empty string."
-
--- TODO: This isn't a great way to modify an existing parser's behavior. I'd
--- like to  make a parser that fails if the previous parser's output does not
--- match a particular value, but that requires changing the parser's data
--- constructor. I'm trying to keep it as similar to State as possible.
+        Left $ parseError state "Encountered end of input."
 
 parseCharacter :: Char -> Parser Char
 parseCharacter target =
@@ -84,3 +83,13 @@ parseWhile continue = Parser $ \state ->
   let toParse = takeWhile continue (input state)
   in runParser (parseString toParse) state
 
+parseDigits :: Parser Int
+parseDigits = stringToInteger <$> parseWhile isDigit
+
+stringToInteger :: String -> Int
+stringToInteger =
+    sum
+  . map (uncurry (*))
+  . zip [10 ^ e | e <- [0..]]
+  . map digitToInt
+  . reverse
