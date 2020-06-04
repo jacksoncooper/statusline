@@ -4,3 +4,4 @@ import Emit
 
 main :: IO ()
 main = emit
+

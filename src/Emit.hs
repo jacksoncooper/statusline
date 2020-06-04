@@ -4,7 +4,7 @@ module Emit
 
 import Control.Concurrent (threadDelay)
 import Control.Monad (forever)
-import System.IO (stdout,hSetBuffering, BufferMode(LineBuffering))
+import System.IO (stdout, hSetBuffering, BufferMode(LineBuffering))
 
 import Block
 import Blocks.Date
@@ -24,5 +24,4 @@ emit =
   in
         hSetBuffering stdout LineBuffering
      >> forever doWrite
-
 
