@@ -5,9 +5,19 @@ module Parse where
 import Data.Char
 
 data State = State
-  { position :: Int
-  , remaining :: String
+  { line :: Int
+  , column :: Int
+  , input :: String
   } deriving Show
+
+parseError :: State -> String -> String
+parseError state reason =
+  "Parse error at line "
+  ++ show (line state)
+  ++ ", column "
+  ++ show (column state)
+  ++ ": "
+  ++ reason
 
 newtype Parser a =
   Parser { runParser :: State -> Either String (State, a) }
@@ -19,7 +29,7 @@ instance Functor Parser where
 
 instance Applicative Parser where
   pure :: a -> Parser a
-  pure a = Parser $ \_ -> Right (State 0 "", a)
+  pure a = Parser $ \state -> Right (state, a)
 
   (<*>) :: Parser (a -> b) -> Parser a -> Parser b
   (Parser parser) <*> (Parser parser') =
@@ -39,47 +49,38 @@ instance Monad Parser where
         \(state', a) ->
           runParser (f a) state'
 
-consumeCharacter :: Parser Char
-consumeCharacter =
-  Parser $ \(State position remaining) ->
-    case remaining of
-      (character : rest) ->
-        Right (State (position + 1) rest, character)
-      "" ->
-        Left "Encountered an empty string."
+consume :: Parser Char
+consume =
+  Parser $ \state@(State line column input) ->
+    case input of
+      (inputHead : restOfInput) ->
+        if inputHead == '\n'
+        then Right (State (line + 1) 0 restOfInput, inputHead)
+        else Right (State line (column + 1) restOfInput, inputHead)
+      [] ->
+        Left $ parseError state "Cannot consume character from empty string."
 
-validateCharacter :: (Char -> Bool) -> (Char -> a) -> (Char -> String) -> Parser a
-validateCharacter isValid transform explanation =
-  -- The parser's monad instance doesn't allow us to fail the parser using a
-  -- bind. We have to operate over the Either type that wraps it. Consider a
-  -- different implementation of the parser's data constructor.
-
-  Parser $ \state ->
-    runParser consumeCharacter state >>=
-      \(state', consumed) ->
-        if isValid consumed
-        then Right (state', transform consumed)
-        else Left (explanation consumed)
+-- TODO: This isn't a great way to modify an existing parser's behavior. I'd
+-- like to  make a parser that fails if the previous parser's output does not
+-- match a particular value, but that requires changing the parser's data
+-- constructor. I'm trying to keep it as similar to State as possible.
 
 parseCharacter :: Char -> Parser Char
 parseCharacter target =
-  let explanation consumed =
-        "The character '"
-        ++ pure consumed
-        ++ "' is not '"
-        ++ pure target
-        ++ "'."
-  in validateCharacter (target ==) id explanation
+  Parser $ \state ->
+    runParser consume state >>=
+      \(state', character) ->
+        if character == target
+        then Right (state', character)
+        else Left $ parseError state'
+          "Encountered '" ++ [character] ++ "' instead of '"
+          ++ [target] ++ "'."
 
-parseDigit :: Parser Int
-parseDigit =
-  let explanation consumed =
-        "The character '"
-        ++ pure consumed
-        ++ "' is not a digit."
-  in validateCharacter isDigit digitToInt explanation
+parseString :: String -> Parser String
+parseString = traverse parseCharacter
 
--- parseDigits :: Parser [Int]
--- parseDigits =
---   Parser $ \s -> undefined
+parseWhile :: (Char -> Bool) -> Parser String
+parseWhile continue = Parser $ \state ->
+  let toParse = takeWhile continue (input state)
+  in runParser (parseString toParse) state
 
