@@ -1,7 +1,7 @@
 name:                statusline
 version:             0.1.0.0
 github:              "githubuser/statusline"
-license:             BSD3
+license:
 author:              "Author name here"
 maintainer:          "example@example.com"
 copyright:           "2020 Author name here"
