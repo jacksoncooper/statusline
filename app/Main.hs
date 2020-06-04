@@ -1,6 +1,6 @@
 module Main where
 
-import Lib
+import Emit
 
 main :: IO ()
-main = someFunc
+main = emit

@@ -17,10 +17,11 @@ extra-source-files:
 # To avoid duplicated efforts in documentation and dealing with the
 # complications of embedding Haddock markup inside cabal files, it is
 # common to point users to the README.md file.
-description:         Please see the README on GitHub at <https://github.com/githubuser/statusline#readme>
+description: "A statusline program for use with Sway."
 
 dependencies:
 - base >= 4.7 && < 5
+- time >= 1.9.3
 
 library:
   source-dirs: src
@@ -46,3 +47,4 @@ tests:
     - -with-rtsopts=-N
     dependencies:
     - statusline
+

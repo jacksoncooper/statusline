@@ -23,6 +23,8 @@ parseError state reason =
 -- of style for newer designs. I'm using this representation because of its similariy to the State
 -- type synonym, defined in Control.Monad.Trans.State.
 
+-- TODO: Maybe use Text.ParserCombinators.ReadP in 'base' instad of rolling your own.
+
 newtype Parser a =
   Parser { runParser :: State -> Either String (State, a) }
 
@@ -93,3 +95,4 @@ stringToInteger =
   . zip [10 ^ e | e <- [0..]]
   . map digitToInt
   . reverse
+
