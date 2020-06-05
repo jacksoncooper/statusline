@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: e635f794c26ce2d273554bb2774b93ecdec0e3982a8f7b1ab2fe3f93b805495d
+-- hash: 42520d113c89f1129a2d250ae9c5c7f3ffd198b0024957cfdd810782dd5b5b2e
 
 name:           statusline
 version:        0.1.0.0
@@ -25,6 +25,7 @@ library
   exposed-modules:
       Block
       Blocks.Battery
+      Blocks.Brightness
       Blocks.Date
       Emit
       Parse

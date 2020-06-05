@@ -16,4 +16,3 @@ readableDate =
 dateBlock :: Block
 dateBlock =
   Block "date" "extended" readableDate
-

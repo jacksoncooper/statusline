@@ -1,8 +1,23 @@
 {-# LANGUAGE InstanceSigs #-}
 
-module Parse where
+module Parse
+  ( Parser (..)
+  , State (..)
+  , Result
+  , parseDigits
+  , toState
+  , getValue
+  )
+where
 
-import Data.Char
+import Data.Char (isDigit, digitToInt)
+
+-- According to 'Haskell Programming from First Principles', these sorts of
+-- parsers have fallen out of style for newer designs. I'm using this
+-- representation because of its similarity to the State type synonym, defined
+-- in Control.Monad.Trans.State.
+
+type Result a = Either String (State, a)
 
 data State = State
   { line :: Int
@@ -10,22 +25,8 @@ data State = State
   , input :: String
   } deriving Show
 
-parseError :: State -> String -> String
-parseError state reason =
-  "Parse error at line "
-  ++ show (line state)
-  ++ ", column "
-  ++ show (column state)
-  ++ ": "
-  ++ reason
-
--- According to Haskell Programming from First Principles, these sorts of
--- parsers have fallen out of style for newer designs. I'm using this
--- representation because of its similarity to the State type synonym, defined
--- in Control.Monad.Trans.State.
-
 newtype Parser a =
-  Parser { runParser :: State -> Either String (State, a) }
+  Parser { runParser :: State -> Result a }
 
 instance Functor Parser where
   fmap :: (a -> b) -> Parser a -> Parser b
@@ -79,13 +80,25 @@ parseCharacter target =
 parseString :: String -> Parser String
 parseString = traverse parseCharacter
 
+parseDigits :: Parser Int
+parseDigits = stringToInteger <$> parseWhile isDigit
+
 parseWhile :: (Char -> Bool) -> Parser String
 parseWhile continue = Parser $ \state ->
   let toParse = takeWhile continue (input state)
   in runParser (parseString toParse) state
 
-parseDigits :: Parser Int
-parseDigits = stringToInteger <$> parseWhile isDigit
+toState :: String -> State
+toState = State 0 0
+
+parseError :: State -> String -> String
+parseError state reason =
+  "Parse error at line "
+  ++ show (line state)
+  ++ ", column "
+  ++ show (column state)
+  ++ ": "
+  ++ reason
 
 stringToInteger :: String -> Int
 stringToInteger =
@@ -94,3 +107,9 @@ stringToInteger =
   . zip [10 ^ e | e <- [0..]]
   . map digitToInt
   . reverse
+
+getValue :: Result a -> Maybe a
+getValue result =
+  case result of
+    Right (_, a) -> Just a
+    Left _       -> Nothing

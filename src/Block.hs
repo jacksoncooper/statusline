@@ -20,4 +20,3 @@ information block =
          putStrLn ("Name: " ++ kind block)
       >> putStrLn ("Instance: " ++ identifier block)
       >> putStrLn ("Full text: " ++ fullText)
-
