@@ -4,28 +4,27 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: a75e11799fafaae3b4e71e78d9a1a0f6e7806c07e46ded98a813655dc71f98f3
+-- hash: e635f794c26ce2d273554bb2774b93ecdec0e3982a8f7b1ab2fe3f93b805495d
 
 name:           statusline
 version:        0.1.0.0
 description:    A statusline program for use with Sway.
-homepage:       https://github.com/githubuser/statusline#readme
-bug-reports:    https://github.com/githubuser/statusline/issues
-author:         Author name here
-maintainer:     example@example.com
-copyright:      2020 Author name here
+homepage:       https://github.com/jacksoncooper/statusline#readme
+bug-reports:    https://github.com/jacksoncooper/statusline/issues
+author:         Jackson Cooper
+maintainer:     jacksoncooper@users.noreply.github.com
 build-type:     Simple
 extra-source-files:
     README.md
-    ChangeLog.md
 
 source-repository head
   type: git
-  location: https://github.com/githubuser/statusline
+  location: https://github.com/jacksoncooper/statusline
 
 library
   exposed-modules:
       Block
+      Blocks.Battery
       Blocks.Date
       Emit
       Parse
@@ -44,20 +43,6 @@ executable statusline-exe
       Paths_statusline
   hs-source-dirs:
       app
-  ghc-options: -threaded -rtsopts -with-rtsopts=-N
-  build-depends:
-      base >=4.7 && <5
-    , statusline
-    , time >=1.9.3
-  default-language: Haskell2010
-
-test-suite statusline-test
-  type: exitcode-stdio-1.0
-  main-is: Spec.hs
-  other-modules:
-      Paths_statusline
-  hs-source-dirs:
-      test
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.7 && <5

@@ -1,6 +1,6 @@
 module Main where
 
-import Emit
+import Emit (emit)
 
 main :: IO ()
 main = emit

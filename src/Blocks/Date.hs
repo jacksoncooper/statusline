@@ -1,6 +1,7 @@
 module Blocks.Date
   ( dateBlock
-  ) where
+  )
+where
 
 import Data.Time
 

@@ -19,11 +19,10 @@ parseError state reason =
   ++ ": "
   ++ reason
 
--- According to Haskell Programming from First Principles, these sorts of parsers have fallen out
--- of style for newer designs. I'm using this representation because of its similariy to the State
--- type synonym, defined in Control.Monad.Trans.State.
-
--- TODO: Maybe use Text.ParserCombinators.ReadP in 'base' instad of rolling your own.
+-- According to Haskell Programming from First Principles, these sorts of
+-- parsers have fallen out of style for newer designs. I'm using this
+-- representation because of its similarity to the State type synonym, defined
+-- in Control.Monad.Trans.State.
 
 newtype Parser a =
   Parser { runParser :: State -> Either String (State, a) }
@@ -95,4 +94,3 @@ stringToInteger =
   . zip [10 ^ e | e <- [0..]]
   . map digitToInt
   . reverse
-

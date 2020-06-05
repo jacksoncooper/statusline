@@ -1,14 +1,11 @@
 name:                statusline
 version:             0.1.0.0
-github:              "githubuser/statusline"
-license:
-author:              "Author name here"
-maintainer:          "example@example.com"
-copyright:           "2020 Author name here"
+github:              "jacksoncooper/statusline"
+author:              "Jackson Cooper"
+maintainer:          "jacksoncooper@users.noreply.github.com"
 
 extra-source-files:
 - README.md
-- ChangeLog.md
 
 # Metadata used when publishing your package
 # synopsis:            Short description of your package
@@ -36,15 +33,3 @@ executables:
     - -with-rtsopts=-N
     dependencies:
     - statusline
-
-tests:
-  statusline-test:
-    main:                Spec.hs
-    source-dirs:         test
-    ghc-options:
-    - -threaded
-    - -rtsopts
-    - -with-rtsopts=-N
-    dependencies:
-    - statusline
-
