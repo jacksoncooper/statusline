@@ -3,9 +3,11 @@ module Blocks.Battery
  )
 where
 
+import Control.Applicative (liftA2)
 import System.IO (FilePath, readFile)
 
 import Block
+import Parse
 
 batteryPath :: String -> FilePath
 batteryPath battery =
@@ -21,11 +23,15 @@ externalPath = batteryPath "BAT1"
 
 batteryBlock :: Block
 batteryBlock =
-  Block "battery" "combined" $
-    readFile internalPath >>=
-      \internalCapacity ->
-        readFile externalPath >>=
-          \externalCapacity ->
-            return $
-                 "Main: " ++ init internalCapacity ++ " "
-              ++ "Extra: " ++ init externalCapacity
+  Block "battery" "combined" $  do
+    maybeInternal <- runParser parseDigits <$> readFile internalPath
+    maybeExternal <- runParser parseDigits <$> readFile externalPath
+
+    let batteryPair = liftA2 (,) maybeInternal maybeExternal
+
+    return $
+      case batteryPair of
+        Just (internal, external) ->
+          "Main: " ++ show internal ++ " Extra: " ++ show external
+        Nothing ->
+          "[Failed to parse battery.]"

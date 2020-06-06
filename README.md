@@ -3,11 +3,11 @@ and experiment with the IO type and modules in `base`. It emits system
 information to populate `sway-bar` in an extremely environment-specific and
 unportable way.
 
-Things I'd like to implement:
+To implement:
 
 1. Emit JSON as specified by `swaybar-protocol`.
 2. Add another thread to listen for pause and continue signals.
-3. Use `Text.ParserCombinators.ReadP` in `base` instead of your own parser
-   combinators.
-4. Use only non-partial functions and be able to recover from parsing and file
-   IO failures.
+3. Use `Text.ParserCombinators.ReadP` in `base`.
+4. Recover gracefully from file input/output errors.
+5. Extend the existing parser combinators to parse the output of
+   `amixer get Master`.

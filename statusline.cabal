@@ -4,11 +4,11 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 42520d113c89f1129a2d250ae9c5c7f3ffd198b0024957cfdd810782dd5b5b2e
+-- hash: bd44b1a611779141a753ea8443f760c9a7f95e6e494ccbec5e232c0288df6313
 
 name:           statusline
 version:        0.1.0.0
-description:    A statusline program for use with Sway.
+description:    A statusline program for use with sway-bar.
 homepage:       https://github.com/jacksoncooper/statusline#readme
 bug-reports:    https://github.com/jacksoncooper/statusline/issues
 author:         Jackson Cooper

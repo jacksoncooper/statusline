@@ -2,6 +2,7 @@
 
 module Parse
   ( parseDigits
+  , parseWhile
   , runParser
   , runParserVerbose
   )
@@ -82,7 +83,7 @@ parseWhile predicate = Parser $ \state ->
 
 parseError :: State -> String -> String
 parseError state reason =
-  "Parse error at line "
+     "Parse error at line "
   ++ show (line state)
   ++ ", column "
   ++ show (column state)

@@ -40,4 +40,4 @@ brightnessBlock =
             ++ show (round percentage)
             ++ "%"
         Nothing ->
-          "Failed to parse display brightness."
+          "[Failed to parse display brightness.]"

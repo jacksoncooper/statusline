@@ -14,7 +14,7 @@ extra-source-files:
 # To avoid duplicated efforts in documentation and dealing with the
 # complications of embedding Haddock markup inside cabal files, it is
 # common to point users to the README.md file.
-description: A statusline program for use with Sway.
+description: A statusline program for use with sway-bar.
 
 dependencies:
 - base >= 4.7 && < 5
