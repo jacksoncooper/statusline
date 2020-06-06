@@ -9,7 +9,5 @@ Things I'd like to implement:
 2. Add another thread to listen for pause and continue signals.
 3. Use `Text.ParserCombinators.ReadP` in `base` instead of your own parser
    combinators.
-4. Use only non-partial functions and be able to recover from parsing failures.
-   I'm looking at you `init`.
-5. Figure out what's going on with record exporting and how that affects the
-   privacy of a datatype and its constructors.
+4. Use only non-partial functions and be able to recover from parsing and file
+   IO failures.

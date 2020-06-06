@@ -26,5 +26,4 @@ emit =
 
       threadDelay (1 * 10 ^ 6)
   in
-       hSetBuffering stdout LineBuffering
-    >> forever doWrite
+      hSetBuffering stdout LineBuffering >> forever doWrite
