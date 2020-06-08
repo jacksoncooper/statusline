@@ -24,8 +24,8 @@ externalPath = batteryPath "BAT1"
 batteryBlock :: Block
 batteryBlock =
   Block "battery" "combined" $  do
-    maybeInternal <- runParser parseDigits <$> readFile internalPath
-    maybeExternal <- runParser parseDigits <$> readFile externalPath
+    maybeInternal <- runParser parseInteger <$> readFile internalPath
+    maybeExternal <- runParser parseInteger <$> readFile externalPath
 
     let batteryPair = liftA2 (,) maybeInternal maybeExternal
 

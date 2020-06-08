@@ -22,8 +22,8 @@ maximumPath = backlightPath "max_brightness"
 brightnessBlock :: Block
 brightnessBlock =
   Block "brightness" "laptop" $ do
-    maybeBrightness <- runParser parseDigits <$> readFile brightnessPath
-    maybeMaximum    <- runParser parseDigits <$> readFile maximumPath
+    maybeBrightness <- runParser parseInteger <$> readFile brightnessPath
+    maybeMaximum    <- runParser parseInteger <$> readFile maximumPath
     
     let brightnessPair = liftA2 (,) maybeBrightness maybeMaximum
 
@@ -40,4 +40,4 @@ brightnessBlock =
             ++ show (round percentage)
             ++ "%"
         Nothing ->
-          "[Failed to parse display brightness.]"
+          "[Failed to parse brightness.]"

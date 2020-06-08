@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: bd44b1a611779141a753ea8443f760c9a7f95e6e494ccbec5e232c0288df6313
+-- hash: 2303a58332c1ea76fda6ae1afa61abf6782f82d6624d8317fa3669a6219565a4
 
 name:           statusline
 version:        0.1.0.0
@@ -24,6 +24,7 @@ source-repository head
 library
   exposed-modules:
       Block
+      Blocks.Audio
       Blocks.Battery
       Blocks.Brightness
       Blocks.Date
