@@ -1,7 +1,10 @@
 {-# LANGUAGE InstanceSigs #-}
 
 module Parse
-  ( parseInteger
+  ( parseCharacter
+  , parseInteger
+  , parseWhitespace
+  , parseLine
   , runParser
   , runParserVerbose
   )
@@ -107,6 +110,13 @@ parseWhitespace =
            "Expected whitespace but found '"
         ++ [character]
         ++ "."
+
+parseLine :: Parser String
+parseLine =
+  some $
+    parseCharacterIf (/= '\n') $
+      \_ ->
+        "Encountered newline."
 
 parseDigit :: Parser Int
 parseDigit =
