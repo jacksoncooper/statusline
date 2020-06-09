@@ -4,6 +4,10 @@ module Blocks.Date
 where
 
 import Data.Time
+  ( defaultTimeLocale
+  , formatTime
+  , getZonedTime
+  )
 
 import Block
 

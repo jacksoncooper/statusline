@@ -4,7 +4,7 @@ module Parse
   ( parseCharacter
   , parseInteger
   , parseWhitespace
-  , parseLine
+  , parseUntil
   , runParser
   , runParserVerbose
   )
@@ -99,6 +99,13 @@ parseCharacterIf predicate explain =
           else Left $ parseError state (explain character)
         Left _ -> result
 
+parseUntil :: Char -> Parser String
+parseUntil character =
+  many $
+    parseCharacterIf (/= character) $
+      \_ ->
+        "Encountered '" ++ [character] ++ "'."
+
 parseString :: String -> Parser String
 parseString = traverse parseCharacter
 
@@ -110,13 +117,6 @@ parseWhitespace =
            "Expected whitespace but found '"
         ++ [character]
         ++ "."
-
-parseLine :: Parser String
-parseLine =
-  some $
-    parseCharacterIf (/= '\n') $
-      \_ ->
-        "Encountered newline."
 
 parseDigit :: Parser Int
 parseDigit =

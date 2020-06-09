@@ -6,23 +6,29 @@ where
 import Control.Concurrent (threadDelay)
 import Control.Monad (forever)
 import Data.List (intercalate)
-import System.IO (stdout, hSetBuffering, BufferMode (LineBuffering))
+import System.IO
+  ( BufferMode (LineBuffering)
+  , hSetBuffering
+  , stdout
+  )
 
 import Block
-import Blocks.Date
 import Blocks.Battery
 import Blocks.Brightness
+import Blocks.Date
+import Blocks.Audio
 
 emit :: IO ()
 emit =
   let
     doWrite = do
-      dateText       <- getFullText dateBlock
-      batteryText    <- getFullText batteryBlock
-      brightnessText <- getFullText brightnessBlock
+      dateText       <- fullText dateBlock
+      batteryText    <- fullText batteryBlock
+      brightnessText <- fullText brightnessBlock
+      audioText      <- fullText audioBlock
 
       putStrLn . intercalate " | " $
-        [dateText, batteryText, brightnessText]
+        [dateText, batteryText, brightnessText, audioText]
 
       threadDelay (1 * 10 ^ 6)
   in

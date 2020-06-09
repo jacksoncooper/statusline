@@ -10,12 +10,12 @@ where
 data Block = Block
   { kind :: String
   , identifier :: String
-  , getFullText :: IO String
+  , fullText :: IO String
   }
 
 information :: Block -> IO ()
 information block =
-  getFullText block >>=
+  fullText block >>=
     \fullText ->
          putStrLn ("Name: " ++ kind block)
       >> putStrLn ("Instance: " ++ identifier block)

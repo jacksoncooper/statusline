@@ -18,6 +18,8 @@ description: A statusline program for use with sway-bar.
 
 dependencies:
 - base >= 4.7 && < 5
+- containers >= 0.6.2.1
+- process >= 1.6.8.0
 - time >= 1.9.3
 
 library:

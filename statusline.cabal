@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 2303a58332c1ea76fda6ae1afa61abf6782f82d6624d8317fa3669a6219565a4
+-- hash: fc4fc6997eda6182963e63f39f061c3c33ca8f6a2f7c097dbe866896305e2979
 
 name:           statusline
 version:        0.1.0.0
@@ -36,6 +36,8 @@ library
       src
   build-depends:
       base >=4.7 && <5
+    , containers >=0.6.2.1
+    , process >=1.6.8.0
     , time >=1.9.3
   default-language: Haskell2010
 
@@ -48,6 +50,8 @@ executable statusline-exe
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.7 && <5
+    , containers >=0.6.2.1
+    , process >=1.6.8.0
     , statusline
     , time >=1.9.3
   default-language: Haskell2010
