@@ -38,6 +38,5 @@ brightnessBlock =
           in
                "Display: "
             ++ show (round percentage)
-            ++ "%"
         Nothing ->
           "[Failed to parse brightness.]"

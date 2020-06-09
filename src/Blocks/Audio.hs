@@ -15,9 +15,6 @@ import System.Process
 import Block
 import Parse
 
--- A semi-closed handle becomes closed once the entire contents of the handle
--- has been read. (System.IO)
-
 getStatus :: IO String
 getStatus =
   let process = shell "amixer get Master"
@@ -28,7 +25,7 @@ statusToMap =
   let
     pairParser = do
       parseWhitespace
-      name  <- parseUntil ':'
+      name <- parseUntil ':'
       parseCharacter ':'
       status <- parseUntil '\n'
       return (name, status)
@@ -37,15 +34,19 @@ statusToMap =
          parseUntil '\n'
       >> (fromList <$> some pairParser)
 
-getPercentage :: String -> Maybe Int
-getPercentage =
+channelValue :: String -> Maybe (Bool, Int)
+channelValue =
   let
-    percentageParser = do
+    channelParser = do
       parseUntil '['
       parseCharacter '['
-      parseInteger
+      value <- parseInteger
+      parseUntil '['
+      parseCharacter '['
+      enabled <- parseUntil ']'
+      return (enabled == "on", value) 
   in
-    runParser percentageParser
+    runParser channelParser
 
 audioBlock :: Block
 audioBlock =
@@ -55,20 +56,26 @@ audioBlock =
         getStatus >>= \status ->
           return $
             let
-              statuses =
-                statusToMap status
+              statuses = statusToMap status
               maybeLeft =
-                statuses >>= Map.lookup "Front Left" >>= getPercentage
+                    statuses
+                >>= Map.lookup "Front Left"
+                >>= channelValue
               maybeRight =
-                statuses >>= Map.lookup "Front Right" >>= getPercentage
-              toReadable (left, right) =
+                    statuses
+                >>= Map.lookup "Front Right"
+                >>= channelValue
+              channelToString channel =
+                case channel of
+                  (True, value) -> show value
+                  _ -> "off"
+              channelsToString (left, right) =
                   "Left: "
-                ++ show left
-                ++ "% Right: "
-                ++ show right
-                ++ "%"
+                ++ channelToString left
+                ++ " Right: "
+                ++ channelToString right
             in
-              toReadable <$> liftA2 (,) maybeLeft maybeRight
+              channelsToString <$> liftA2 (,) maybeLeft maybeRight
     in
       audioStatus >>=
         \audioText ->

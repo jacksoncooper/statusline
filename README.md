@@ -9,5 +9,5 @@ To implement:
 2. Add another thread to listen for stop and continue signals from
    `swaybar-protocol`.
 3. Use `Text.ParserCombinators.ReadP` in `base`.
-4. Clean up parser combinators and `audio` module, support `amixer`
-   muted state.
+4. Clean up parser combinators to avoid redundancy, and use `do` notation in
+   blocks.

@@ -59,7 +59,7 @@ instance Monad Parser where
 instance Alternative Parser where
   empty :: Parser a
   empty = Parser $ \state ->
-    Left "Alternative identity."
+    Left $ parseError state "Alternative identity."
 
   (<|>) :: Parser a -> Parser a -> Parser a
   (Parser parser) <|> (Parser parser') =
