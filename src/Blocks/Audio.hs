@@ -7,7 +7,7 @@ import Data.Map.Lazy as Map (Map, fromList, lookup)
 import GHC.IO.Handle (hGetContents)
 import System.Process
   ( StdStream (CreatePipe)
-  , createProcess
+  , readCreateProcess
   , shell
   , std_out
   )
@@ -18,13 +18,10 @@ import Parse
 -- A semi-closed handle becomes closed once the entire contents of the handle
 -- has been read. (System.IO)
 
-getStatus :: IO (Maybe String)
+getStatus :: IO String
 getStatus =
-  createProcess (shell "amixer get Master") { std_out = CreatePipe } >>=
-    \(_, maybeHandle, _, _) ->
-      case maybeHandle of
-        Just handle -> Just <$> hGetContents handle
-        Nothing     -> return Nothing
+  let process = shell "amixer get Master"
+  in readCreateProcess process []
 
 statusToMap :: String -> Maybe (Map String String)
 statusToMap =
@@ -53,23 +50,25 @@ getPercentage =
 audioBlock :: Block
 audioBlock =
   Block "audio" "internal" $
-    let audioStatus =
-          getStatus >>= \maybeStatus ->
-            return $
-              maybeStatus >>= \status ->
-                let statuses =
-                      statusToMap status
-                    maybeLeft =
-                      statuses >>= Map.lookup "Front Left" >>= getPercentage
-                    maybeRight =
-                      statuses >>= Map.lookup "Front Right" >>= getPercentage
-                    toReadable (left, right) =
-                        "Left: "
-                      ++ show left
-                      ++ "% Right: "
-                      ++ show right
-                      ++ "%"
-                in toReadable <$> liftA2 (,) maybeLeft maybeRight
+    let
+      audioStatus =
+        getStatus >>= \status ->
+          return $
+            let
+              statuses =
+                statusToMap status
+              maybeLeft =
+                statuses >>= Map.lookup "Front Left" >>= getPercentage
+              maybeRight =
+                statuses >>= Map.lookup "Front Right" >>= getPercentage
+              toReadable (left, right) =
+                  "Left: "
+                ++ show left
+                ++ "% Right: "
+                ++ show right
+                ++ "%"
+            in
+              toReadable <$> liftA2 (,) maybeLeft maybeRight
     in
       audioStatus >>=
         \audioText ->
