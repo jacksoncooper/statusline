@@ -72,7 +72,7 @@ channelsToString :: Channel -> Channel -> String
 channelsToString left right =
      "Left: "
   ++ channelToString left
-  ++ "Right: "
+  ++ " Right: "
   ++ channelToString right
 
 audioBlock :: Block
