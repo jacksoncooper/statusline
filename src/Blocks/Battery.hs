@@ -34,4 +34,4 @@ batteryBlock =
         Just (internal, external) ->
           "Main: " ++ show internal ++ " Extra: " ++ show external
         Nothing ->
-          "[Failed to parse battery.]"
+          "Failed to fetch battery."

@@ -4,6 +4,7 @@ module Blocks.Audio
 
 import Control.Applicative (liftA2, some)
 import Data.Map.Lazy as Map (Map, fromList, lookup)
+import Data.Maybe (fromMaybe)
 import GHC.IO.Handle (hGetContents)
 import System.Process
   ( StdStream (CreatePipe)
@@ -15,13 +16,19 @@ import System.Process
 import Block
 import Parse
 
-getStatus :: IO String
-getStatus =
+type Contents = Map String String
+
+data Channel = Channel Name Value
+type Name = String
+data Value = On Int | Off
+
+amixerOutput :: IO String
+amixerOutput =
   let process = shell "amixer get Master"
   in readCreateProcess process []
 
-statusToMap :: String -> Maybe (Map String String)
-statusToMap =
+toContents :: String -> Maybe Contents
+toContents =
   let
     pairParser = do
       parseWhitespace
@@ -31,55 +38,52 @@ statusToMap =
       return (name, status)
   in
     runParser $
-         parseUntil '\n'
+         parseThrough '\n'
       >> (fromList <$> some pairParser)
 
-channelValue :: String -> Maybe (Bool, Int)
+getChannel :: Contents -> Name -> Maybe Channel
+getChannel contents name =
+  let maybeValue = Map.lookup name contents >>= channelValue
+   in Channel name <$> maybeValue
+
+channelValue :: String -> Maybe Value
 channelValue =
   let
     channelParser = do
-      parseUntil '['
-      parseCharacter '['
+      parseThrough '['
       value <- parseInteger
-      parseUntil '['
-      parseCharacter '['
+      parseThrough '['
       enabled <- parseUntil ']'
-      return (enabled == "on", value) 
+
+      return $
+        if enabled == "on"
+        then On value
+        else Off
   in
     runParser channelParser
+
+channelToString :: Channel -> String
+channelToString channel =
+  case channel of
+    Channel _ (On value) -> show value
+    _ -> "off"
+
+channelsToString :: Channel -> Channel -> String
+channelsToString left right =
+     "Left: "
+  ++ channelToString left
+  ++ "Right: "
+  ++ channelToString right
 
 audioBlock :: Block
 audioBlock =
   Block "audio" "internal" $
-    let
-      audioStatus =
-        getStatus >>= \status ->
-          return $
-            let
-              statuses = statusToMap status
-              maybeLeft =
-                    statuses
-                >>= Map.lookup "Front Left"
-                >>= channelValue
-              maybeRight =
-                    statuses
-                >>= Map.lookup "Front Right"
-                >>= channelValue
-              channelToString channel =
-                case channel of
-                  (True, value) -> show value
-                  _ -> "off"
-              channelsToString (left, right) =
-                  "Left: "
-                ++ channelToString left
-                ++ " Right: "
-                ++ channelToString right
-            in
-              channelsToString <$> liftA2 (,) maybeLeft maybeRight
-    in
-      audioStatus >>=
-        \audioText ->
-          return $
-            case audioText of
-              Just text -> text
-              Nothing   -> "[Failed to fetch audio.]"
+    amixerOutput >>= \output ->
+      return . fromMaybe "Failed to fetch audio." $ do
+        contents <- toContents output
+
+        let maybeLeft     = getChannel contents "Front Left"
+            maybeRight    = getChannel contents "Front Right"
+            maybeChannels = liftA2 (,) maybeLeft maybeRight
+
+        uncurry channelsToString <$> maybeChannels

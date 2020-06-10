@@ -5,6 +5,7 @@ module Parse
   , parseInteger
   , parseWhitespace
   , parseUntil
+  , parseThrough
   , runParser
   , runParserVerbose
   )
@@ -91,7 +92,11 @@ parseCharacter target =
 parseCharacterIf :: (Char -> Bool) -> (Char -> String) -> Parser Char
 parseCharacterIf predicate explain =
   Parser $ \state ->
-    let result = runParser' consumeCharacter state in
+    -- A bind would be more elegant here, but there's no way to retrieve the
+    -- character that the first parser consumes.
+
+    let result = runParser' consumeCharacter state
+    in
       case result of
         Right (state', character) ->
           if predicate character
@@ -103,15 +108,17 @@ parseUntil :: Char -> Parser String
 parseUntil character =
   many $
     parseCharacterIf (/= character) $
-      \_ ->
-        "Encountered '" ++ [character] ++ "'."
+      const ("Encountered '" ++ [character] ++ "'.")
 
-parseString :: String -> Parser String
-parseString = traverse parseCharacter
+parseThrough :: Char -> Parser String
+parseThrough character =
+  parseUntil character >>=
+    \leadingCharacters ->
+      (leadingCharacters ++) . (: []) <$> parseCharacter character
 
 parseWhitespace :: Parser String
 parseWhitespace =
-  some $
+  many $
     parseCharacterIf isSpace $
       \character ->
            "Expected whitespace but found '"
