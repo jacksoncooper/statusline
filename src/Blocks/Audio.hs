@@ -5,12 +5,9 @@ module Blocks.Audio
 import Control.Applicative (liftA2, some)
 import Data.Map.Lazy as Map (Map, fromList, lookup)
 import Data.Maybe (fromMaybe)
-import GHC.IO.Handle (hGetContents)
 import System.Process
-  ( StdStream (CreatePipe)
-  , readCreateProcess
+  ( readCreateProcess
   , shell
-  , std_out
   )
 
 import Block
@@ -18,9 +15,10 @@ import Parse
 
 type Contents = Map String String
 
-data Channel = Channel Name Value
 type Name = String
 data Value = On Int | Off
+
+data Channel = Channel Name Value
 
 amixerOutput :: IO String
 amixerOutput =
@@ -44,7 +42,7 @@ toContents =
 getChannel :: Contents -> Name -> Maybe Channel
 getChannel contents name =
   let maybeValue = Map.lookup name contents >>= channelValue
-   in Channel name <$> maybeValue
+  in  Channel name <$> maybeValue
 
 channelValue :: String -> Maybe Value
 channelValue =

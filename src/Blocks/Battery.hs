@@ -9,29 +9,66 @@ import System.IO (FilePath, readFile)
 import Block
 import Parse
 
-batteryPath :: String -> FilePath
-batteryPath battery =
+type Capacity = Int
+type Status   = String
+
+data Battery = Battery Capacity Status
+
+batteryToString :: Battery -> String
+batteryToString (Battery capacity status) =
+  let
+    statusSymbol =
+      case status of
+        "Charging"    -> " ▲" 
+        "Discharging" -> " ▼"
+        _             -> ""
+  in
+        show capacity
+     ++ statusSymbol
+
+batteryPath :: String -> String -> FilePath
+batteryPath property battery =
      "/sys/class/power_supply/"
   ++ battery
-  ++ "/capacity"
+  ++ "/"
+  ++ property
 
-internalPath :: FilePath
-internalPath = batteryPath "BAT0"
+capacityPath :: String -> FilePath
+capacityPath = batteryPath "capacity"
 
-externalPath :: FilePath
-externalPath = batteryPath "BAT1"
+statusPath :: String -> FilePath
+statusPath = batteryPath "status"
 
 batteryBlock :: Block
 batteryBlock =
-  Block "battery" "combined" $  do
-    maybeInternal <- runParser parseInteger <$> readFile internalPath
-    maybeExternal <- runParser parseInteger <$> readFile externalPath
+  Block "battery" "combined" $ do
+    internalCapacity <-
+          runParser parseInteger
+      <$> readFile (capacityPath "BAT0")
 
-    let batteryPair = liftA2 (,) maybeInternal maybeExternal
+    externalCapacity <-
+          runParser parseInteger
+      <$> readFile (capacityPath "BAT1")
+
+    internalStatus <-
+          runParser (parseUntil '\n')
+      <$> readFile (statusPath "BAT0")
+
+    externalStatus <-
+          runParser (parseUntil '\n')
+      <$> readFile (statusPath "BAT1")
+
+    let internal = liftA2 Battery internalCapacity internalStatus
+        external = liftA2 Battery externalCapacity externalStatus
+        pair = liftA2 (,) internal external
 
     return $
-      case batteryPair of
+      case pair of
         Just (internal, external) ->
-          "Main: " ++ show internal ++ " Extra: " ++ show external
+             "Internal: "
+          ++ batteryToString internal
+          ++ " "
+          ++ "External: "
+          ++ batteryToString external
         Nothing ->
           "Failed to fetch battery."
