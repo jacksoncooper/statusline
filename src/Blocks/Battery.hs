@@ -19,11 +19,14 @@ batteryToString (Battery capacity status) =
   let
     statusSymbol =
       case status of
-        "Charging"    -> " ▲" 
-        "Discharging" -> " ▼"
-        _             -> ""
+        "Charging"    -> "▲" 
+        "Discharging" -> "▼"
+        "Full"        -> "●"
+        "Unknown"      -> "↻"
+        _             -> "🐛"
   in
         show capacity
+     ++ " "
      ++ statusSymbol
 
 batteryPath :: String -> String -> FilePath
