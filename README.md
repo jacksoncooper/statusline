@@ -3,6 +3,8 @@ and experiment with the IO type and modules in `base`. It emits system
 information to populate `sway-bar` in an extremely environment-specific and
 unportable way.
 
+![Screenshot of statusline output in sway-bar.](https://i.imgur.com/Yxo7gtz.png)
+
 To implement:
 
 1. Emit JSON as specified by `swaybar-protocol`.

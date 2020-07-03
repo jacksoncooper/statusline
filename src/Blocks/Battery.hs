@@ -22,7 +22,7 @@ batteryToString (Battery capacity status) =
         "Charging"    -> "▲" 
         "Discharging" -> "▼"
         "Full"        -> "●"
-        "Unknown"      -> "↻"
+        "Unknown"     -> "↻"
         _             -> "🐛"
   in
         show capacity
