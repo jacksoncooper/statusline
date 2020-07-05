@@ -3,7 +3,7 @@ and experiment with the `IO` type and modules in `base`. It emits system
 information to populate `sway-bar` in an extremely environment-specific and
 unportable way.
 
-![Screenshot of statusline output in sway-bar.](https://i.imgur.com/Yxo7gtz.png)
+![Screenshot of statusline output in sway-bar.](https://i.imgur.com/OVxaxVR.png?2)
 
 To implement:
 
