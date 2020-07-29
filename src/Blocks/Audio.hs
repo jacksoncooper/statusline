@@ -64,7 +64,7 @@ channelToString :: Channel -> String
 channelToString channel =
   case channel of
     Channel _ (On value) -> show value
-    _ -> "off"
+    _ -> "-"
 
 channelsToString :: Channel -> Channel -> String
 channelsToString left right =

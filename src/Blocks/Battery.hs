@@ -19,14 +19,13 @@ batteryToString (Battery capacity status) =
   let
     statusSymbol =
       case status of
-        "Charging"    -> "▲" 
-        "Discharging" -> "▼"
-        "Full"        -> "●"
-        "Unknown"     -> "↻"
-        _             -> "🐛"
+        "Charging"    -> " ▲" 
+        "Discharging" -> " ▼"
+        "Full"        -> " ●"
+        "Unknown"     -> ""
+        _             -> " 🐛"
   in
         show capacity
-     ++ " "
      ++ statusSymbol
 
 batteryPath :: String -> String -> FilePath
@@ -70,8 +69,7 @@ batteryBlock =
         Just (internal, external) ->
              "Internal: "
           ++ batteryToString internal
-          ++ " "
-          ++ "External: "
+          ++ " External: "
           ++ batteryToString external
         Nothing ->
           "Failed to fetch battery."
