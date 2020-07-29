@@ -1,5 +1,5 @@
 `statusline` is a toy Haskell program to get a feel for Haskell's build tools
-and experiment with the IO type and modules in `base`. It emits system
+and experiment with the `IO` type and modules in `base`. It emits system
 information to populate `sway-bar` in an extremely environment-specific and
 unportable way.
 
